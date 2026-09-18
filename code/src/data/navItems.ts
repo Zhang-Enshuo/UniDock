@@ -8,4 +8,5 @@ export const navItems: NavItem[] = [
   { id: "help", label: "联系与帮助", subtitle: "Help" },
   { id: "campus", label: "校园生活", subtitle: "Campus" },
   { id: "account", label: "账号工具", subtitle: "Account" },
+  { id: "settings", label: "个人信息 / 设置", subtitle: "Local settings" },
 ];

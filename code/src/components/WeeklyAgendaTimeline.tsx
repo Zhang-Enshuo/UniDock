@@ -1,28 +1,37 @@
-import { CourseBlock } from "./CourseBlock";
-import type { Course, CourseModalState } from "../types";
+import { CalendarPlus } from "lucide-react";
+import { AgendaEventBlock } from "./AgendaEventBlock";
+import type { AgendaEvent, AgendaEventModalState } from "../types";
 import { getCoursePosition, getTodayId, hourHeight, timelineEndHour, timelineStartHour, weekdays } from "../utils/time";
 
-type WeeklyScheduleTimelineProps = {
-  courses: Course[];
-  onCourseOpen: (modal: CourseModalState) => void;
+type WeeklyAgendaTimelineProps = {
+  events: AgendaEvent[];
+  onEventOpen: (modal: AgendaEventModalState) => void;
+  onManageOpen: (eventId?: string) => void;
 };
 
-export function WeeklyScheduleTimeline({ courses, onCourseOpen }: WeeklyScheduleTimelineProps) {
+export function WeeklyAgendaTimeline({ events, onEventOpen, onManageOpen }: WeeklyAgendaTimelineProps) {
   const hours = Array.from({ length: timelineEndHour - timelineStartHour + 1 }, (_, index) => timelineStartHour + index);
   const todayId = getTodayId();
 
   return (
-    <section className="panel schedule-panel" aria-labelledby="schedule-title">
+    <section className="panel schedule-panel equal-panel" aria-labelledby="agenda-title">
       <div className="panel-header">
         <div>
           <p className="panel-kicker">Schedule</p>
-          <h2 id="schedule-title">本周课表</h2>
+          <h2 id="agenda-title">本周日程</h2>
         </div>
-        <a className="panel-action" href="https://timetables.unswcollege.edu.au/aplus/student" target="_blank" rel="noreferrer">
-          打开 Allocate+
-        </a>
+        <div className="panel-actions">
+          <button className="panel-action primary-action" type="button" onClick={() => onManageOpen()}>
+            <CalendarPlus size={16} />
+            添加日程
+          </button>
+          <a className="panel-action" href="https://timetables.unswcollege.edu.au/aplus/student" target="_blank" rel="noreferrer">
+            打开 Allocate+
+          </a>
+        </div>
       </div>
-      <div className="timeline-shell" style={{ "--hour-height": `${hourHeight}px` } as React.CSSProperties}>
+
+      <div className="timeline-shell agenda-scroll" style={{ "--hour-height": `${hourHeight}px` } as React.CSSProperties}>
         <div className="timeline-header">
           <div className="timeline-corner" />
           {weekdays.map((day) => (
@@ -32,6 +41,7 @@ export function WeeklyScheduleTimeline({ courses, onCourseOpen }: WeeklySchedule
             </div>
           ))}
         </div>
+
         <div className="timeline-body">
           <div className="time-axis">
             {hours.map((hour) => (
@@ -46,10 +56,10 @@ export function WeeklyScheduleTimeline({ courses, onCourseOpen }: WeeklySchedule
                 {hours.slice(0, -1).map((hour) => (
                   <div className="hour-line" key={hour} />
                 ))}
-                {courses
-                  .filter((course) => course.weekday === day.id)
-                  .map((course) => (
-                    <CourseBlock course={course} key={course.id} onOpen={onCourseOpen} position={getCoursePosition(course.startTime, course.endTime)} />
+                {events
+                  .filter((event) => event.weekday === day.id)
+                  .map((event) => (
+                    <AgendaEventBlock event={event} key={event.id} onOpen={onEventOpen} position={getCoursePosition(event.startTime, event.endTime)} />
                   ))}
               </div>
             ))}

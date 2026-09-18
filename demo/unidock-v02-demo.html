@@ -1,0 +1,1173 @@
+<div id="unidock-v02-demo" class="uv2">
+  <style>
+    #unidock-v02-demo {
+      --ud-bg: light-dark(#f6f7f9, #101318);
+      --ud-surface: light-dark(#ffffff, #171b22);
+      --ud-soft: light-dark(#f9fafb, #202630);
+      --ud-text: light-dark(#172033, #f4f6fb);
+      --ud-muted: light-dark(#667085, #a7b0c0);
+      --ud-border: light-dark(#e4e7ec, #323a47);
+      --ud-line: light-dark(#d0d5dd, #3a4453);
+      --ud-yellow: #ffd500;
+      --ud-yellow-soft: light-dark(#fff8bf, #443c08);
+      --ud-green: #12b76a;
+      --ud-red: #d92d20;
+      --ud-blue: #2563eb;
+      --ud-blue-soft: light-dark(#eff6ff, #18263d);
+      --ud-red-soft: light-dark(#fff1f0, #3b1716);
+      --ud-shadow: 0 20px 50px rgba(23, 32, 51, 0.10);
+      color: var(--ud-text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-width: 320px;
+    }
+
+    #unidock-v02-demo * { box-sizing: border-box; }
+    #unidock-v02-demo button,
+    #unidock-v02-demo input,
+    #unidock-v02-demo select,
+    #unidock-v02-demo textarea { font: inherit; }
+    #unidock-v02-demo button { cursor: pointer; }
+
+    #unidock-v02-demo [hidden] {
+      display: none !important;
+    }
+
+    #unidock-v02-demo .shell {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      height: calc(100vh - 20px);
+      min-height: 860px;
+      overflow: hidden;
+      border: 1px solid var(--ud-border);
+      border-radius: 14px;
+      background: var(--ud-bg);
+    }
+
+    #unidock-v02-demo .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      border-right: 1px solid var(--ud-border);
+      background: var(--ud-surface);
+      padding: 22px 14px;
+    }
+
+    #unidock-v02-demo .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 4px;
+    }
+
+    #unidock-v02-demo .brand-mark {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--ud-yellow);
+      color: #101828;
+      font-weight: 800;
+    }
+
+    #unidock-v02-demo h1,
+    #unidock-v02-demo h2,
+    #unidock-v02-demo h3,
+    #unidock-v02-demo p { margin: 0; }
+
+    #unidock-v02-demo .brand h1 { font-size: 20px; line-height: 1.1; }
+    #unidock-v02-demo .brand p { margin-top: 4px; color: var(--ud-muted); font-size: 13px; }
+
+    #unidock-v02-demo .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    #unidock-v02-demo .nav-main {
+      flex: 1;
+      align-content: start;
+    }
+
+    #unidock-v02-demo .nav-settings {
+      border-top: 1px solid var(--ud-border);
+      padding-top: 12px;
+    }
+
+    #unidock-v02-demo .nav-item {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+      min-height: 52px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--ud-text);
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    #unidock-v02-demo .nav-item:hover {
+      border-color: var(--ud-border);
+      background: var(--ud-soft);
+    }
+
+    #unidock-v02-demo .nav-item.is-active {
+      border-color: #f1c400;
+      background: var(--ud-yellow-soft);
+      box-shadow: inset 4px 0 0 var(--ud-yellow);
+    }
+
+    #unidock-v02-demo .nav-icon {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--ud-soft);
+      font-weight: 700;
+    }
+
+    #unidock-v02-demo .nav-item.is-active .nav-icon { background: var(--ud-surface); }
+    #unidock-v02-demo .nav-title { display: block; font-size: 14px; font-weight: 800; }
+    #unidock-v02-demo .nav-sub { display: block; margin-top: 2px; color: var(--ud-muted); font-size: 12px; }
+
+    #unidock-v02-demo .main {
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      gap: 18px;
+      overflow: auto;
+      padding: 22px;
+    }
+
+    #unidock-v02-demo .overview,
+    #unidock-v02-demo .panel {
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-surface);
+    }
+
+    #unidock-v02-demo .overview {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      padding: 20px 22px;
+      box-shadow: var(--ud-shadow);
+    }
+
+    #unidock-v02-demo .kicker {
+      margin-bottom: 6px;
+      color: var(--ud-muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    #unidock-v02-demo .overview h2 { font-size: 26px; line-height: 1.15; }
+    #unidock-v02-demo .overview-copy { margin-top: 8px; color: var(--ud-muted); }
+    #unidock-v02-demo .overview-actions { display: grid; gap: 10px; justify-items: end; }
+
+    #unidock-v02-demo .date-pill,
+    #unidock-v02-demo .small-pill,
+    #unidock-v02-demo .status-badge {
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-soft);
+      padding: 6px 10px;
+      color: var(--ud-text);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    #unidock-v02-demo #uv2-open-count {
+      display: grid;
+      min-width: 42px;
+      height: 42px;
+      place-items: center;
+      padding: 0;
+      line-height: 1;
+      text-align: center;
+    }
+
+    #unidock-v02-demo .quick-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    #unidock-v02-demo .quick-link,
+    #unidock-v02-demo .action-btn,
+    #unidock-v02-demo .ghost-btn,
+    #unidock-v02-demo .icon-btn {
+      border: 1px solid var(--ud-line);
+      border-radius: 8px;
+      background: var(--ud-surface);
+      color: var(--ud-text);
+      padding: 8px 10px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    #unidock-v02-demo .action-btn {
+      border-color: #101828;
+      background: #101828;
+      color: #fff;
+    }
+
+    #unidock-v02-demo .ghost-btn:hover,
+    #unidock-v02-demo .quick-link:hover,
+    #unidock-v02-demo .icon-btn:hover {
+      border-color: #c9a800;
+      background: var(--ud-yellow-soft);
+    }
+
+    #unidock-v02-demo .workspace-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(310px, 380px);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    #unidock-v02-demo .panel {
+      padding: 18px;
+    }
+
+    #unidock-v02-demo #uv2-home > .panel {
+      height: 100%;
+    }
+
+    #unidock-v02-demo #uv2-home > .panel:last-child {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #unidock-v02-demo #uv2-home > .panel:last-child .todo-list {
+      align-content: start;
+      flex: 1;
+    }
+
+    #unidock-v02-demo .panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    #unidock-v02-demo .panel-title h3 { font-size: 20px; }
+    #unidock-v02-demo .panel-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+
+    #unidock-v02-demo .schedule-wrap { overflow: hidden; }
+    #unidock-v02-demo .schedule {
+      width: 100%;
+      min-width: 0;
+    }
+
+    #unidock-v02-demo .timeline-head {
+      display: grid;
+      grid-template-columns: 52px repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    #unidock-v02-demo .day-head,
+    #unidock-v02-demo .time-corner {
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-soft);
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    #unidock-v02-demo .day-head.today {
+      border-color: #d6b600;
+      background: var(--ud-yellow-soft);
+    }
+
+    #unidock-v02-demo .timeline-body {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      min-height: 560px;
+    }
+
+    #unidock-v02-demo .time-axis,
+    #unidock-v02-demo .lanes {
+      position: relative;
+      min-height: 560px;
+    }
+
+    #unidock-v02-demo .time-axis span {
+      position: absolute;
+      right: 8px;
+      transform: translateY(-50%);
+      color: var(--ud-muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    #unidock-v02-demo .lanes {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        repeating-linear-gradient(to bottom, var(--ud-border) 0, var(--ud-border) 1px, transparent 1px, transparent 70px),
+        var(--ud-soft);
+    }
+
+    #unidock-v02-demo .lane {
+      position: relative;
+      border-right: 1px solid var(--ud-border);
+    }
+
+    #unidock-v02-demo .lane:last-child { border-right: 0; }
+    #unidock-v02-demo .lane.today { background: color-mix(in srgb, var(--ud-yellow) 9%, transparent); }
+
+    #unidock-v02-demo .course {
+      position: absolute;
+      right: 7px;
+      left: 7px;
+      display: grid;
+      align-content: start;
+      gap: 5px;
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-surface);
+      padding: 10px;
+      box-shadow: 0 1px 0 rgba(23, 32, 51, 0.03);
+      cursor: zoom-in;
+    }
+
+    #unidock-v02-demo .course:hover {
+      border-color: #c9a800;
+      box-shadow: 0 12px 24px rgba(23, 32, 51, 0.14);
+    }
+
+    #unidock-v02-demo .course-name {
+      overflow-wrap: anywhere;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.24;
+    }
+
+    #unidock-v02-demo .course-meta {
+      color: var(--ud-muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    #unidock-v02-demo .todo-form {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    #unidock-v02-demo .todo-line {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    #unidock-v02-demo .due-line {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 110px auto;
+      gap: 8px;
+    }
+
+    #unidock-v02-demo input,
+    #unidock-v02-demo select,
+    #unidock-v02-demo textarea {
+      min-width: 0;
+      border: 1px solid var(--ud-line);
+      border-radius: 8px;
+      background: var(--ud-surface);
+      color: var(--ud-text);
+      padding: 10px 12px;
+    }
+
+    #unidock-v02-demo textarea { min-height: 78px; resize: vertical; }
+
+    #unidock-v02-demo .sort-note {
+      margin-bottom: 10px;
+      color: var(--ud-muted);
+      font-size: 12px;
+    }
+
+    #unidock-v02-demo .todo-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #unidock-v02-demo .todo-item {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-soft);
+      padding: 9px;
+      cursor: zoom-in;
+      transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+    }
+
+    #unidock-v02-demo .todo-item:hover {
+      border-color: #c9a800;
+      box-shadow: 0 10px 24px rgba(23, 32, 51, 0.12);
+      transform: translateY(-1px);
+    }
+
+    #unidock-v02-demo .todo-item.done .todo-title {
+      color: var(--ud-muted);
+      text-decoration: line-through;
+    }
+
+    #unidock-v02-demo .todo-title { font-weight: 700; }
+    #unidock-v02-demo .todo-check {
+      width: 24px;
+      height: 24px;
+      margin: 0;
+      accent-color: var(--ud-green);
+      cursor: pointer;
+    }
+    #unidock-v02-demo .todo-sub { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    #unidock-v02-demo .badge-overdue { border-color: color-mix(in srgb, var(--ud-red) 35%, var(--ud-border)); background: var(--ud-red-soft); color: var(--ud-red); }
+    #unidock-v02-demo .badge-today { border-color: #d6b600; background: var(--ud-yellow-soft); }
+    #unidock-v02-demo .badge-tomorrow { border-color: color-mix(in srgb, var(--ud-blue) 25%, var(--ud-border)); background: var(--ud-blue-soft); color: var(--ud-blue); }
+    #unidock-v02-demo .badge-muted { color: var(--ud-muted); }
+
+    #unidock-v02-demo .link-tools {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    #unidock-v02-demo .link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    #unidock-v02-demo .link-card {
+      display: grid;
+      min-height: 132px;
+      align-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-soft);
+      padding: 14px;
+    }
+
+    #unidock-v02-demo .link-card header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    #unidock-v02-demo .link-card h3 { font-size: 15px; overflow-wrap: anywhere; }
+    #unidock-v02-demo .link-card p { color: var(--ud-muted); font-size: 13px; }
+
+    #unidock-v02-demo .settings-page {
+      display: grid;
+      gap: 16px;
+    }
+
+    #unidock-v02-demo .settings-section {
+      border-top: 1px solid var(--ud-border);
+      padding-top: 16px;
+    }
+
+    #unidock-v02-demo .settings-section:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    #unidock-v02-demo .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    #unidock-v02-demo .form-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    #unidock-v02-demo label {
+      color: var(--ud-muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    #unidock-v02-demo .span-2 { grid-column: 1 / -1; }
+
+    #unidock-v02-demo .favorite-manager {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    #unidock-v02-demo .mini-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    #unidock-v02-demo .mini-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--ud-border);
+      border-radius: 8px;
+      background: var(--ud-soft);
+      padding: 9px;
+    }
+
+    #unidock-v02-demo .drawer-backdrop,
+    #unidock-v02-demo .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      background: rgba(23, 32, 51, 0.28);
+      backdrop-filter: blur(6px);
+    }
+
+    #unidock-v02-demo .drawer-backdrop.is-open,
+    #unidock-v02-demo .modal-backdrop.is-open { display: block; }
+
+    #unidock-v02-demo .drawer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: min(440px, 92vw);
+      height: 100%;
+      overflow: auto;
+      border-left: 1px solid var(--ud-border);
+      background: var(--ud-surface);
+      padding: 20px;
+      box-shadow: -30px 0 70px rgba(23, 32, 51, 0.18);
+    }
+
+    #unidock-v02-demo .drawer-head,
+    #unidock-v02-demo .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    #unidock-v02-demo .course-edit-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    #unidock-v02-demo .weekday-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    #unidock-v02-demo .weekday-row button,
+    #unidock-v02-demo .favorite-toggle {
+      border: 1px solid var(--ud-line);
+      border-radius: 8px;
+      background: var(--ud-surface);
+      color: var(--ud-text);
+      padding: 8px;
+      font-weight: 800;
+    }
+
+    #unidock-v02-demo .weekday-row button.is-selected,
+    #unidock-v02-demo .favorite-toggle.is-selected {
+      border-color: #d6b600;
+      background: var(--ud-yellow-soft);
+    }
+
+    #unidock-v02-demo .modal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(420px, 92vw);
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--ud-border);
+      border-radius: 18px;
+      background: var(--ud-surface);
+      padding: 22px;
+      box-shadow: 0 36px 80px rgba(23, 32, 51, 0.28);
+    }
+
+    #unidock-v02-demo .modal-actions,
+    #unidock-v02-demo .row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    #unidock-v02-demo .local-note {
+      margin-top: 8px;
+      color: var(--ud-muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      #unidock-v02-demo .shell { grid-template-columns: 82px minmax(0, 1fr); }
+      #unidock-v02-demo .brand div:last-child,
+      #unidock-v02-demo .nav-title,
+      #unidock-v02-demo .nav-sub { display: none; }
+      #unidock-v02-demo .nav-item { grid-template-columns: 1fr; justify-items: center; }
+      #unidock-v02-demo .workspace-grid,
+      #unidock-v02-demo .favorite-manager { grid-template-columns: 1fr; }
+      #unidock-v02-demo .link-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      #unidock-v02-demo .shell { display: block; }
+      #unidock-v02-demo .sidebar { position: static; }
+      #unidock-v02-demo .main { padding: 14px; }
+      #unidock-v02-demo .overview { display: grid; }
+      #unidock-v02-demo .overview-actions { justify-items: start; }
+      #unidock-v02-demo .timeline-head { grid-template-columns: 44px repeat(5, minmax(0, 1fr)); }
+      #unidock-v02-demo .timeline-body { grid-template-columns: 44px minmax(0, 1fr); }
+      #unidock-v02-demo .form-grid,
+      #unidock-v02-demo .due-line,
+      #unidock-v02-demo .todo-line,
+      #unidock-v02-demo .link-tools,
+      #unidock-v02-demo .link-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <div class="shell">
+    <aside class="sidebar" aria-label="UniDock navigation">
+      <div class="brand">
+        <div class="brand-mark">U</div>
+        <div>
+          <h1>UniDock</h1>
+          <p>UNSW student hub</p>
+        </div>
+      </div>
+      <nav class="nav nav-main" id="uv2-nav-main"></nav>
+      <nav class="nav nav-settings" id="uv2-nav-settings"></nav>
+    </aside>
+
+    <main class="main">
+      <section class="overview">
+        <div>
+          <p class="kicker" id="uv2-kicker">个人学习工作台</p>
+          <h2 id="uv2-title">今天要看的东西</h2>
+          <p class="overview-copy" id="uv2-copy">这里是 Home 页，只放本周日程、待办事项和常用入口。</p>
+        </div>
+        <div class="overview-actions">
+          <span class="date-pill">Friday 18 Sept</span>
+          <div class="quick-links" id="uv2-quick-links"></div>
+        </div>
+      </section>
+
+      <section class="workspace-grid" id="uv2-home">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <p class="kicker">Schedule</p>
+              <h3>本周日程</h3>
+            </div>
+            <div class="panel-actions">
+              <button class="ghost-btn" type="button" id="uv2-edit-schedule">添加日程</button>
+              <button class="ghost-btn" type="button">打开 Allocate+</button>
+            </div>
+          </div>
+          <div class="schedule-wrap">
+            <div class="schedule" id="uv2-schedule"></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <p class="kicker">Todo</p>
+              <h3>待办事项</h3>
+            </div>
+            <div class="panel-actions">
+              <span class="small-pill" id="uv2-open-count">0</span>
+              <button class="action-btn" type="button" id="uv2-open-add-todo">新增待办</button>
+            </div>
+          </div>
+          <p class="sort-note">自动排序：未完成优先，按截止时间排列</p>
+          <ul class="todo-list" id="uv2-todo-list"></ul>
+        </section>
+      </section>
+
+      <section class="panel" id="uv2-links-page" hidden>
+        <div class="panel-header">
+          <div class="panel-title">
+            <p class="kicker">Links</p>
+            <h3 id="uv2-links-heading">学校入口</h3>
+          </div>
+          <span class="small-pill">本地置顶偏好</span>
+        </div>
+        <div class="link-tools">
+          <input id="uv2-link-search" type="search" placeholder="搜索学校入口、说明或分类" aria-label="搜索学校入口">
+          <button class="ghost-btn" type="button" id="uv2-clear-search">清除搜索</button>
+        </div>
+        <div class="link-grid" id="uv2-link-grid"></div>
+      </section>
+
+      <section class="panel settings-page" id="uv2-settings-page" hidden>
+        <div class="panel-header">
+          <div class="panel-title">
+            <p class="kicker">Local settings</p>
+            <h3>个人信息 / 设置</h3>
+          </div>
+          <button class="action-btn" type="button">保存到本地</button>
+        </div>
+
+        <section class="settings-section">
+          <h3>基础资料</h3>
+          <p class="local-note">这些信息只保存在此浏览器中，不会同步到云端。</p>
+          <div class="form-grid">
+            <div class="form-field"><label>昵称或姓名</label><input value="Enzo"></div>
+            <div class="form-field"><label>zID</label><input value="z5555555"></div>
+            <div class="form-field"><label>Program / Course</label><input value="UNSW College Foundation"></div>
+            <div class="form-field"><label>Term / Intake</label><input value="Term 1"></div>
+            <div class="form-field"><label>Student Email</label><input value="z5555555@ad.unsw.edu.au"></div>
+            <div class="form-field"><label>Campus</label><input value="Kensington"></div>
+            <div class="form-field span-2"><label>备注</label><textarea>刚到校，优先关注日程、邮件和学生事务入口。</textarea></div>
+          </div>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="uv2-drawer-backdrop">
+    <aside class="drawer" aria-label="编辑日程">
+      <div class="drawer-head">
+        <div>
+          <p class="kicker">Schedule editor</p>
+          <h2>编辑日程</h2>
+          <p class="local-note">日程只保存在本地 Demo 数据中。</p>
+        </div>
+        <button class="icon-btn" type="button" data-close-drawer>×</button>
+      </div>
+      <div class="mini-list" id="uv2-course-list"></div>
+      <div class="course-edit-grid">
+        <h3 id="uv2-course-form-title">新增事件</h3>
+        <div class="form-field"><label>事件名称</label><input id="uv2-course-name" value="Academic Writing Tutorial"></div>
+        <div class="form-field"><label>星期</label><div class="weekday-row" id="uv2-weekday-row"></div></div>
+        <div class="form-grid">
+          <div class="form-field"><label>开始时间</label><input id="uv2-course-start" type="time" value="15:00"></div>
+          <div class="form-field"><label>结束时间</label><input id="uv2-course-end" type="time" value="16:00"></div>
+        </div>
+        <div class="form-field"><label>地点</label><input id="uv2-course-location" value="Webster 251"></div>
+        <div class="row-actions">
+          <button class="ghost-btn" type="button" id="uv2-delete-course">删除事件</button>
+          <button class="action-btn" type="button" id="uv2-save-course">保存事件</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="modal-backdrop" id="uv2-modal-backdrop">
+    <article class="modal" id="uv2-course-modal" aria-label="事件详情"></article>
+  </div>
+
+  <div class="modal-backdrop" id="uv2-todo-modal-backdrop">
+    <article class="modal" aria-label="待办表单">
+      <div class="modal-head">
+        <div>
+          <p class="kicker" id="uv2-todo-modal-kicker">Todo</p>
+          <h2 id="uv2-todo-modal-title">新增待办</h2>
+          <p class="local-note">填写待办内容，截止日期和时间可以留空。</p>
+        </div>
+        <button class="icon-btn" type="button" data-close-todo-modal>×</button>
+      </div>
+      <div class="course-edit-grid">
+        <div class="form-field"><label>待办内容</label><input id="uv2-edit-todo-title"></div>
+        <div class="form-grid">
+          <div class="form-field"><label>截止日期</label><input id="uv2-edit-due-date" type="date"></div>
+          <div class="form-field"><label>截止时间</label><select id="uv2-edit-due-time"></select></div>
+        </div>
+        <div class="modal-actions">
+          <button class="ghost-btn" type="button" data-close-todo-modal>取消</button>
+          <button class="action-btn" type="button" id="uv2-save-todo">保存</button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById("unidock-v02-demo");
+      const today = "2026-09-18";
+      const tomorrow = "2026-09-19";
+      const navItems = [
+        { id: "home", label: "Home", sub: "日程与待办", icon: "⌂" },
+        { id: "study", label: "学习相关", sub: "Study", icon: "▣" },
+        { id: "admin", label: "学校事务", sub: "Admin", icon: "▤" },
+        { id: "support", label: "生活支持", sub: "Support", icon: "♡" },
+        { id: "help", label: "联系与帮助", sub: "Help", icon: "?" },
+        { id: "campus", label: "校园生活", sub: "Campus", icon: "⌖" },
+        { id: "account", label: "账号工具", sub: "Account", icon: "⚿" },
+      ];
+      const settingsItem = { id: "settings", label: "个人信息 / 设置", sub: "Local settings", icon: "⚙" };
+      const categories = Object.fromEntries(navItems.filter(n => n.id !== "home").map(n => [n.id, n.label]));
+      const links = [
+        { id: "moodle", categoryId: "study", title: "Moodle", description: "课程资料、作业和学习内容入口。" },
+        { id: "allocate", categoryId: "study", title: "Allocate+", description: "查看课表、选课和出勤相关信息。" },
+        { id: "calendar", categoryId: "study", title: "Academic Calendar", description: "查看关键日期、假期和学期安排。" },
+        { id: "subject", categoryId: "study", title: "Subject Enrolment Form", description: "提交选课或科目登记相关表格。" },
+        { id: "progress", categoryId: "study", title: "Student Progress Support", description: "预约学业进度支持。" },
+        { id: "current", categoryId: "admin", title: "Current Student Website", description: "查看 UNSW College 当前学生的重要信息与服务入口。" },
+        { id: "forms", categoryId: "admin", title: "Student Forms", description: "查找并提交学生事务表格。" },
+        { id: "id", categoryId: "admin", title: "Student ID Card", description: "预约办理或更换学生卡。" },
+        { id: "policies", categoryId: "admin", title: "College Policies", description: "查看学院政策和流程。" },
+        { id: "prefs", categoryId: "admin", title: "FS UNSW Preferences", description: "Foundation Studies 升学偏好相关入口。" },
+        { id: "accommodation", categoryId: "support", title: "Accommodation Support", description: "预约住宿相关支持。" },
+        { id: "wellbeing", categoryId: "support", title: "Wellbeing Support", description: "预约身心健康支持。" },
+        { id: "safezone", categoryId: "support", title: "24/7 Support on Campus", description: "校园安全和紧急支持入口。" },
+        { id: "contact", categoryId: "help", title: "Contact Us", description: "不知道找谁时，从这里提交问题。" },
+        { id: "contacts", categoryId: "help", title: "Important Student Contacts", description: "查看重要部门和支持联系方式。" },
+        { id: "map", categoryId: "campus", title: "Campus Map", description: "查找教室和校园地点。" },
+        { id: "events", categoryId: "campus", title: "Events & Activities", description: "查看校园活动和社团活动。" },
+        { id: "volunteering", categoryId: "campus", title: "Volunteering", description: "查看志愿活动机会。" },
+        { id: "password", categoryId: "account", title: "Forgot zID Password", description: "重置 zID 密码。" },
+        { id: "email", categoryId: "account", title: "Student Email", description: "查看学校邮件和正式通知。" },
+      ];
+      let courses = [
+        { id: "eng", name: "Academic English", weekday: "mon", startTime: "09:00", endTime: "10:30", location: "Mathews 310" },
+        { id: "math", name: "Foundation Mathematics", weekday: "mon", startTime: "13:00", endTime: "15:00", location: "Science Theatre" },
+        { id: "biz", name: "Business Studies", weekday: "tue", startTime: "11:00", endTime: "12:30", location: "Blockhouse G6" },
+        { id: "lab", name: "Computing Lab", weekday: "wed", startTime: "10:00", endTime: "12:00", location: "K17 Lab 203" },
+        { id: "skills", name: "Study Skills Workshop", weekday: "thu", startTime: "14:00", endTime: "15:30", location: "Library Room 201" },
+        { id: "consult", name: "Progress Consultation", weekday: "fri", startTime: "09:30", endTime: "10:00", location: "Student Hub" },
+      ];
+      let todos = [
+        { id: "t1", title: "提交 Academic English essay plan", completed: false, dueAt: "2026-09-17T16:00" },
+        { id: "t2", title: "确认下周 Computing Lab 教室", completed: false, dueAt: "2026-09-18T18:00" },
+        { id: "t3", title: "预约 Student ID Card", completed: false, dueAt: "2026-09-19T10:00" },
+        { id: "t4", title: "整理住宿材料", completed: false },
+        { id: "t5", title: "检查 Student Email", completed: true, dueAt: "2026-09-18T09:00" },
+      ];
+      let favoriteIds = ["moodle", "email", "allocate", "current"];
+      let page = "home";
+      let search = "";
+      let editingCourseId = null;
+      let editingTodoId = null;
+
+      const $ = (selector) => root.querySelector(selector);
+      const $$ = (selector) => [...root.querySelectorAll(selector)];
+      const weekdays = [
+        { id: "mon", label: "Mon", zh: "周一" },
+        { id: "tue", label: "Tue", zh: "周二" },
+        { id: "wed", label: "Wed", zh: "周三" },
+        { id: "thu", label: "Thu", zh: "周四" },
+        { id: "fri", label: "Fri", zh: "周五" },
+      ];
+
+      function minutes(time) {
+        const [h, m] = time.split(":").map(Number);
+        return h * 60 + m;
+      }
+
+      function dueInfo(todo) {
+        if (todo.completed) return { label: "已完成", cls: "badge-muted", order: 6 };
+        if (!todo.dueAt) return { label: "无截止时间", cls: "badge-muted", order: 5 };
+        const [date, time] = todo.dueAt.split("T");
+        if (date < today) return { label: `已逾期 ${time}`, cls: "badge-overdue", order: 1 };
+        if (date === today) return { label: `今天 ${time}`, cls: "badge-today", order: 2 };
+        if (date === tomorrow) return { label: `明天 ${time}`, cls: "badge-tomorrow", order: 3 };
+        return { label: `${date.slice(5)} ${time}`, cls: "badge-muted", order: 4 };
+      }
+
+      function renderNav() {
+        $("#uv2-nav-main").innerHTML = navItems.map(item => navButton(item)).join("");
+        $("#uv2-nav-settings").innerHTML = navButton(settingsItem);
+        $$(".nav-item").forEach(btn => btn.addEventListener("click", () => {
+          page = btn.dataset.page;
+          search = "";
+          $("#uv2-link-search").value = "";
+          render();
+        }));
+      }
+
+      function navButton(item) {
+        return `<button class="nav-item ${page === item.id ? "is-active" : ""}" type="button" data-page="${item.id}">
+          <span class="nav-icon">${item.icon}</span>
+          <span><span class="nav-title">${item.label}</span><span class="nav-sub">${item.sub}</span></span>
+        </button>`;
+      }
+
+      function renderPageHeader() {
+        const isHome = page === "home";
+        const isSettings = page === "settings";
+        $("#uv2-home").hidden = !isHome;
+        $("#uv2-links-page").hidden = isHome || isSettings;
+        $("#uv2-settings-page").hidden = !isSettings;
+        $(".quick-links").hidden = !isHome;
+
+        if (isHome) {
+          $("#uv2-kicker").textContent = "个人学习工作台";
+          $("#uv2-title").textContent = "今天要看的东西";
+          $("#uv2-copy").textContent = "这里是 Home 页，只放本周日程、待办事项和常用入口。";
+        } else if (isSettings) {
+          $("#uv2-kicker").textContent = "Local settings";
+          $("#uv2-title").textContent = "个人信息 / 设置";
+          $("#uv2-copy").textContent = "资料、常用入口和显示偏好只保存在本地浏览器中。";
+        } else {
+          $("#uv2-kicker").textContent = "学校入口";
+          $("#uv2-title").textContent = categories[page];
+          $("#uv2-copy").textContent = "这里是导航分栏页，只展示当前分类或搜索到的学校链接。";
+        }
+      }
+
+      function renderQuickLinks() {
+        $("#uv2-quick-links").innerHTML = favoriteIds.slice(0, 4).map(id => {
+          const link = links.find(item => item.id === id);
+          return link ? `<button class="quick-link" type="button">${link.title}</button>` : "";
+        }).join("");
+      }
+
+      function renderSchedule() {
+        const top = 8 * 60;
+        const px = 1.15;
+        const height = (16 * 60 - top) * px;
+        const tickHtml = Array.from({ length: 9 }, (_, i) => {
+          const total = top + i * 60;
+          const label = String(Math.floor(total / 60)).padStart(2, "0") + ":00";
+          return `<span style="top:${(total - top) * px}px">${label}</span>`;
+        }).join("");
+        const lanes = weekdays.map(day => {
+          const blocks = courses.filter(c => c.weekday === day.id).map(course => {
+            const blockTop = Math.max(0, (minutes(course.startTime) - top) * px);
+            const blockHeight = Math.max(105, (minutes(course.endTime) - minutes(course.startTime)) * px);
+            return `<article class="course" style="top:${blockTop}px;height:${blockHeight}px" data-course="${course.id}">
+              <p class="course-name">${course.name}</p>
+              <p class="course-meta">${course.startTime} - ${course.endTime}</p>
+              <p class="course-meta">${course.location}</p>
+            </article>`;
+          }).join("");
+          return `<section class="lane ${day.id === "fri" ? "today" : ""}" style="min-height:${height}px">${blocks}</section>`;
+        }).join("");
+        $("#uv2-schedule").innerHTML = `
+          <div class="timeline-head">
+            <div class="time-corner">Time</div>
+            ${weekdays.map(d => `<div class="day-head ${d.id === "fri" ? "today" : ""}">${d.label} ${d.zh}${d.id === "fri" ? " · 今天" : ""}</div>`).join("")}
+          </div>
+          <div class="timeline-body" style="min-height:${height}px">
+            <div class="time-axis" style="min-height:${height}px">${tickHtml}</div>
+            <div class="lanes" style="min-height:${height}px">${lanes}</div>
+          </div>`;
+        $$(".course").forEach(card => card.addEventListener("click", () => showCourse(card.dataset.course)));
+      }
+
+      function renderTodos() {
+        const sorted = [...todos].sort((a, b) => {
+          const ai = dueInfo(a);
+          const bi = dueInfo(b);
+          if (ai.order !== bi.order) return ai.order - bi.order;
+          return (a.dueAt || "9999").localeCompare(b.dueAt || "9999");
+        });
+        $("#uv2-open-count").textContent = String(todos.filter(t => !t.completed).length);
+        $("#uv2-todo-list").innerHTML = sorted.map(todo => {
+          const info = dueInfo(todo);
+          return `<li class="todo-item ${todo.completed ? "done" : ""}" data-open-todo="${todo.id}">
+            <input class="todo-check" type="checkbox" ${todo.completed ? "checked" : ""} data-toggle-todo="${todo.id}" aria-label="切换待办状态">
+            <div>
+              <p class="todo-title">${todo.title}</p>
+              <div class="todo-sub"><span class="status-badge ${info.cls}">${info.label}</span></div>
+            </div>
+          </li>`;
+        }).join("");
+        $$("[data-toggle-todo]").forEach(box => box.addEventListener("change", () => {
+          const todo = todos.find(t => t.id === box.dataset.toggleTodo);
+          todo.completed = box.checked;
+          renderTodos();
+        }));
+        $$("[data-toggle-todo]").forEach(box => box.addEventListener("click", event => event.stopPropagation()));
+        $$("[data-open-todo]").forEach(item => item.addEventListener("click", () => openTodoEditor(item.dataset.openTodo)));
+      }
+
+      function renderLinks() {
+        const query = search.trim().toLowerCase();
+        const pool = query ? links : links.filter(link => link.categoryId === page);
+        const result = pool.filter(link => {
+          const haystack = `${link.title} ${link.description} ${categories[link.categoryId]}`.toLowerCase();
+          return !query || haystack.includes(query);
+        });
+        $("#uv2-links-heading").textContent = query ? "搜索结果" : categories[page];
+        $("#uv2-link-grid").innerHTML = result.length ? result.map(link => `
+          <article class="link-card">
+            <header>
+              <div><h3>${link.title}</h3><p>${categories[link.categoryId]}</p></div>
+              <button class="favorite-toggle ${favoriteIds.includes(link.id) ? "is-selected" : ""}" type="button" data-favorite="${link.id}">${favoriteIds.includes(link.id) ? "已置顶" : "置顶"}</button>
+            </header>
+            <p>${link.description}</p>
+            <button class="ghost-btn" type="button">打开 ↗</button>
+          </article>`).join("") : `<p class="local-note">没有找到相关入口</p>`;
+        $$("[data-favorite]").forEach(btn => btn.addEventListener("click", () => toggleFavorite(btn.dataset.favorite)));
+      }
+
+      function toggleFavorite(id) {
+        if (favoriteIds.includes(id)) favoriteIds = favoriteIds.filter(item => item !== id);
+        else if (favoriteIds.length < 5) favoriteIds = [...favoriteIds, id];
+        render();
+      }
+
+      function showCourse(id) {
+        const course = courses.find(c => c.id === id);
+        if (!course) return;
+        $("#uv2-course-modal").innerHTML = `
+          <div class="modal-head">
+            <div><p class="kicker">${weekdays.find(d => d.id === course.weekday).label} · ${weekdays.find(d => d.id === course.weekday).zh}</p><h2>${course.name}</h2></div>
+            <button class="icon-btn" type="button" data-close-modal>×</button>
+          </div>
+          <div class="mini-list">
+            <div class="mini-row"><strong>Time</strong><span>${course.startTime} - ${course.endTime}</span></div>
+            <div class="mini-row"><strong>Location</strong><span>${course.location}</span></div>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost-btn" type="button" data-delete-from-modal="${course.id}">删除</button>
+            <button class="action-btn" type="button" data-edit-from-modal="${course.id}">编辑</button>
+          </div>`;
+        $("#uv2-modal-backdrop").classList.add("is-open");
+        root.querySelector("[data-close-modal]").addEventListener("click", closeModal);
+        root.querySelector("[data-edit-from-modal]").addEventListener("click", () => { closeModal(); openScheduleDrawer(course.id); });
+        root.querySelector("[data-delete-from-modal]").addEventListener("click", () => { courses = courses.filter(c => c.id !== course.id); closeModal(); renderSchedule(); });
+      }
+
+      function closeModal() {
+        $("#uv2-modal-backdrop").classList.remove("is-open");
+      }
+
+      function openScheduleDrawer(id) {
+        editingCourseId = id || null;
+        fillCourseForm();
+        $("#uv2-drawer-backdrop").classList.add("is-open");
+      }
+
+      function fillCourseForm() {
+        const course = courses.find(c => c.id === editingCourseId) || { name: "Academic Writing Tutorial", weekday: "fri", startTime: "15:00", endTime: "16:00", location: "Webster 251" };
+        $("#uv2-course-form-title").textContent = editingCourseId ? "编辑事件" : "新增事件";
+        $("#uv2-course-name").value = course.name;
+        $("#uv2-course-start").value = course.startTime;
+        $("#uv2-course-end").value = course.endTime;
+        $("#uv2-course-location").value = course.location;
+        $("#uv2-weekday-row").innerHTML = weekdays.map(day => `<button class="${course.weekday === day.id ? "is-selected" : ""}" type="button" data-weekday="${day.id}">${day.zh}</button>`).join("");
+        $$("[data-weekday]").forEach(btn => btn.addEventListener("click", () => {
+          $$("[data-weekday]").forEach(item => item.classList.remove("is-selected"));
+          btn.classList.add("is-selected");
+        }));
+        renderCourseList();
+      }
+
+      function renderCourseList() {
+        $("#uv2-course-list").innerHTML = courses.map(course => `<div class="mini-row">
+          <div><strong>${course.name}</strong><p class="local-note">${weekdays.find(d => d.id === course.weekday).zh} ${course.startTime}-${course.endTime} · ${course.location}</p></div>
+          <button class="ghost-btn" type="button" data-pick-course="${course.id}">编辑</button>
+        </div>`).join("");
+        $$("[data-pick-course]").forEach(btn => btn.addEventListener("click", () => { editingCourseId = btn.dataset.pickCourse; fillCourseForm(); }));
+      }
+
+      function saveCourse() {
+        const selected = root.querySelector("[data-weekday].is-selected")?.dataset.weekday || "fri";
+        const next = {
+          id: editingCourseId || `course-${Date.now()}`,
+          name: $("#uv2-course-name").value || "Untitled course",
+          weekday: selected,
+          startTime: $("#uv2-course-start").value,
+          endTime: $("#uv2-course-end").value,
+          location: $("#uv2-course-location").value || "TBC",
+        };
+        courses = editingCourseId ? courses.map(c => c.id === editingCourseId ? next : c) : [...courses, next];
+        editingCourseId = next.id;
+        renderSchedule();
+        fillCourseForm();
+      }
+
+      function openTodoEditor(id) {
+        editingTodoId = id;
+        const todo = id ? todos.find(t => t.id === id) : null;
+        $("#uv2-todo-modal-kicker").textContent = id ? "Todo detail" : "New todo";
+        $("#uv2-todo-modal-title").textContent = id ? "待办详情" : "新增待办";
+        $("#uv2-edit-todo-title").value = todo ? todo.title : "";
+        $("#uv2-edit-due-date").value = todo?.dueAt ? todo.dueAt.split("T")[0] : "";
+        $("#uv2-edit-due-time").value = todo?.dueAt ? todo.dueAt.split("T")[1] : "";
+        $("#uv2-todo-modal-backdrop").classList.add("is-open");
+        $("#uv2-edit-todo-title").focus();
+      }
+
+      function saveTodoEdit() {
+        const title = $("#uv2-edit-todo-title").value.trim();
+        if (!title) return;
+        const date = $("#uv2-edit-due-date").value;
+        const time = $("#uv2-edit-due-time").value;
+        const next = {
+          id: editingTodoId || `todo-${Date.now()}`,
+          title,
+          completed: editingTodoId ? todos.find(t => t.id === editingTodoId)?.completed ?? false : false,
+          dueAt: date ? `${date}T${time || "09:00"}` : undefined,
+        };
+        todos = editingTodoId
+          ? todos.map(todo => todo.id === editingTodoId ? next : todo)
+          : [next, ...todos];
+        $("#uv2-todo-modal-backdrop").classList.remove("is-open");
+        editingTodoId = null;
+        renderTodos();
+      }
+
+      function fillTimeSelects() {
+        const options = `<option value="">无时间</option>` + Array.from({ length: 15 }, (_, i) => {
+          const hour = String(i + 7).padStart(2, "0");
+          return `<option value="${hour}:00">${hour}:00</option>`;
+        }).join("");
+        $("#uv2-edit-due-time").innerHTML = options;
+      }
+
+      function render() {
+        renderNav();
+        renderPageHeader();
+        renderQuickLinks();
+        renderSchedule();
+        renderTodos();
+        if (page !== "home" && page !== "settings") renderLinks();
+      }
+
+      fillTimeSelects();
+      $("#uv2-open-add-todo").addEventListener("click", () => openTodoEditor(null));
+      $("#uv2-link-search").addEventListener("input", (event) => { search = event.target.value; renderLinks(); });
+      $("#uv2-clear-search").addEventListener("click", () => { search = ""; $("#uv2-link-search").value = ""; renderLinks(); });
+      $("#uv2-edit-schedule").addEventListener("click", () => openScheduleDrawer(null));
+      root.querySelector("[data-close-drawer]").addEventListener("click", () => $("#uv2-drawer-backdrop").classList.remove("is-open"));
+      $("#uv2-save-course").addEventListener("click", saveCourse);
+      $("#uv2-delete-course").addEventListener("click", () => {
+        if (editingCourseId) courses = courses.filter(c => c.id !== editingCourseId);
+        editingCourseId = null;
+        renderSchedule();
+        fillCourseForm();
+      });
+      root.querySelectorAll("[data-close-todo-modal]").forEach(btn => btn.addEventListener("click", () => $("#uv2-todo-modal-backdrop").classList.remove("is-open")));
+      $("#uv2-save-todo").addEventListener("click", saveTodoEdit);
+      $("#uv2-modal-backdrop").addEventListener("click", event => { if (event.target.id === "uv2-modal-backdrop") closeModal(); });
+      $("#uv2-drawer-backdrop").addEventListener("click", event => { if (event.target.id === "uv2-drawer-backdrop") $("#uv2-drawer-backdrop").classList.remove("is-open"); });
+      $("#uv2-todo-modal-backdrop").addEventListener("click", event => { if (event.target.id === "uv2-todo-modal-backdrop") $("#uv2-todo-modal-backdrop").classList.remove("is-open"); });
+      render();
+    })();
+  </script>
+</div>

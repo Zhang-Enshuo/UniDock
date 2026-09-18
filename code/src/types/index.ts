@@ -5,9 +5,10 @@ export type PageId =
   | "support"
   | "help"
   | "campus"
-  | "account";
+  | "account"
+  | "settings";
 
-export type LinkPageId = Exclude<PageId, "home">;
+export type LinkPageId = Exclude<PageId, "home" | "settings">;
 export type Weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
 export type NavItem = {
@@ -16,7 +17,7 @@ export type NavItem = {
   subtitle: string;
 };
 
-export type Course = {
+export type AgendaEvent = {
   id: string;
   name: string;
   weekday: Weekday;
@@ -25,10 +26,14 @@ export type Course = {
   location: string;
 };
 
+export type Course = AgendaEvent;
+
 export type Todo = {
   id: string;
   title: string;
   completed: boolean;
+  dueDate?: string;
+  dueTime?: string;
 };
 
 export type UniLink = {
@@ -40,6 +45,21 @@ export type UniLink = {
 };
 
 export type CourseModalState = {
-  course: Course;
+  course: AgendaEvent;
   originRect: DOMRect;
 } | null;
+
+export type AgendaEventModalState = {
+  event: AgendaEvent;
+  originRect: DOMRect;
+} | null;
+
+export type Profile = {
+  displayName: string;
+  zId: string;
+  program: string;
+  intake: string;
+  studentEmail: string;
+  campus: string;
+  notes: string;
+};

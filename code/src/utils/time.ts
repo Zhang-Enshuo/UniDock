@@ -9,8 +9,8 @@ export const weekdays: Array<{ id: Weekday; label: string; zh: string }> = [
 ];
 
 export const timelineStartHour = 8;
-export const timelineEndHour = 18;
-export const hourHeight = 72;
+export const timelineEndHour = 20;
+export const hourHeight = 28;
 
 export function timeToMinutes(value: string) {
   const [hours, minutes] = value.split(":").map(Number);
@@ -22,7 +22,7 @@ export function getCoursePosition(startTime: string, endTime: string) {
   const endMinutes = timeToMinutes(endTime);
   const dayStart = timelineStartHour * 60;
   const top = ((startMinutes - dayStart) / 60) * hourHeight;
-  const height = Math.max(((endMinutes - startMinutes) / 60) * hourHeight, 58);
+  const height = Math.max(((endMinutes - startMinutes) / 60) * hourHeight, 42);
   return { top, height };
 }
 
@@ -35,4 +35,8 @@ export function isActiveNow(startTime: string, endTime: string, weekday: Weekday
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   return currentMinutes >= timeToMinutes(startTime) && currentMinutes <= timeToMinutes(endTime);
+}
+
+export function weekdayLabel(weekday: Weekday) {
+  return weekdays.find((day) => day.id === weekday)?.zh ?? weekday;
 }

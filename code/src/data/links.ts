@@ -6,6 +6,7 @@ export const links: UniLink[] = [
   { id: "academic-calendar", categoryId: "study", title: "Academic Calendar", description: "查看关键日期、假期和学期安排。", url: "https://www.unswcollege.edu.au/study/key-dates" },
   { id: "subject-form", categoryId: "study", title: "Subject Enrolment Form", description: "提交选课或科目登记相关表格。", url: "https://self-enrolment-portal.unswcollege.edu.au/" },
   { id: "progress-support", categoryId: "study", title: "Student Progress Support", description: "预约学业进度支持。", url: "https://outlook.office365.com/book/StudentProgressBookHeretoMeetWithanAcademicAdviser@unswcollege.edu.au/" },
+  { id: "current-student", categoryId: "admin", title: "Current Student Website", description: "查看 UNSW College 当前学生的重要信息与服务入口。", url: "https://my.unswcollege.edu.au/" },
   { id: "student-forms", categoryId: "admin", title: "Student Forms", description: "查找并提交学生事务表格。", url: "https://my.unswcollege.edu.au/forms/" },
   { id: "student-id", categoryId: "admin", title: "Student ID Card", description: "预约办理或更换学生卡。", url: "https://app.qtrac.com/scheduler-execution?c-id=0ec4181c-e500-47e0-98a5-690d783bfefb&s-id=486a1a5c-3ef3-4113-afb4-f2b05862523c&type=AB&b-id=e1bbea61-5b10-4405-a90e-4cd5644ac85a" },
   { id: "college-policies", categoryId: "admin", title: "College Policies", description: "查看学院政策和流程。", url: "https://www.unswcollege.edu.au/about/policies" },

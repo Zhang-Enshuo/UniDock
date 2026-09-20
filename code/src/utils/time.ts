@@ -10,7 +10,7 @@ export const weekdays: Array<{ id: Weekday; label: string; zh: string }> = [
 
 export const timelineStartHour = 8;
 export const timelineEndHour = 20;
-export const hourHeight = 28;
+export const hourHeight = 44;
 
 export function timeToMinutes(value: string) {
   const [hours, minutes] = value.split(":").map(Number);
@@ -22,7 +22,7 @@ export function getCoursePosition(startTime: string, endTime: string) {
   const endMinutes = timeToMinutes(endTime);
   const dayStart = timelineStartHour * 60;
   const top = ((startMinutes - dayStart) / 60) * hourHeight;
-  const height = Math.max(((endMinutes - startMinutes) / 60) * hourHeight, 42);
+  const height = Math.max(((endMinutes - startMinutes) / 60) * hourHeight, 60);
   return { top, height };
 }
 

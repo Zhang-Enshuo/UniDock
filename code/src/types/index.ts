@@ -34,6 +34,18 @@ export type Todo = {
   completed: boolean;
   dueDate?: string;
   dueTime?: string;
+  source?: string;
+};
+
+export type TodoViewId = "today" | "planned" | "completed" | "all";
+
+export type MailTodoSuggestion = {
+  id: string;
+  selected: boolean;
+  title: string;
+  dueDate?: string;
+  dueTime?: string;
+  source?: string;
 };
 
 export type UniLink = {

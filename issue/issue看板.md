@@ -23,3 +23,4 @@
 | ISSUE-002 | V0.2 Home 日程时间轴在桌面视口下截断且不可滚动 | bug | 高 / P0 | 已完成 | [issue/closed/ISSUE-002-V0.2-Home日程时间轴在桌面视口下截断且不可滚动.md](closed/ISSUE-002-V0.2-Home日程时间轴在桌面视口下截断且不可滚动.md) |
 | ISSUE-003 | V0.2 Todo 详情页缺少删除入口，较 MVP 发生功能回归 | bug | 高 / P0 | 已完成 | [issue/closed/ISSUE-003-V0.2-Todo缺少删除入口较MVP发生功能回归.md](closed/ISSUE-003-V0.2-Todo缺少删除入口较MVP发生功能回归.md) |
 | ISSUE-005 | 新增日程表单默认预填示例事件内容 | 优化 | 低 / P2 | 已完成 | [issue/closed/ISSUE-005-新增日程表单默认预填示例事件内容.md](closed/ISSUE-005-新增日程表单默认预填示例事件内容.md) |
+| ISSUE-006 | V0.3 邮件助手 tomorrow 相对日期解析错误 | bug | 高 / P0 | 已完成 | [issue/closed/ISSUE-006-V0.3邮件助手tomorrow相对日期解析错误.md](closed/ISSUE-006-V0.3邮件助手tomorrow相对日期解析错误.md) |

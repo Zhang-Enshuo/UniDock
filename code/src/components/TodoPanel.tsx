@@ -1,6 +1,7 @@
-import { MailPlus, Plus, Trash2 } from "lucide-react";
+import { MailPlus, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { MailTodoSuggestion, Todo, TodoViewId } from "../types";
+import { analyzeMailWithAi } from "../services/aiMailAnalysis";
+import type { AiConfidence, AiTodoType, MailAnalysisState, MailTodoSuggestion, Todo, TodoViewId } from "../types";
 
 const defaultTodos: Todo[] = [
   { id: "todo-1", title: "提交 Academic English essay plan", completed: false, dueDate: "2026-09-17", dueTime: "16:00", source: "Academic English" },
@@ -30,6 +31,21 @@ const todoViewNotes: Record<TodoViewId, string> = {
   planned: "计划：展示未来有截止时间的未完成事项。",
   completed: "完成：展示已经处理完的事项。",
   all: "全部：展示所有未完成和已完成事项。",
+};
+
+const typeLabels: Record<AiTodoType, string> = {
+  assignment: "作业",
+  appointment: "预约",
+  meeting: "会议",
+  material: "材料",
+  admin: "行政",
+  other: "其他",
+};
+
+const confidenceLabels: Record<AiConfidence, string> = {
+  high: "高",
+  medium: "中",
+  low: "低",
 };
 
 function loadTodos() {
@@ -87,51 +103,6 @@ function sortTodos(todos: Todo[]) {
   });
 }
 
-function guessDueDate(mail: string) {
-  const today = todayDate();
-  const tomorrow = addDays(today, 1);
-  const lower = mail.toLowerCase();
-  if (lower.includes("tomorrow") || mail.includes("明天")) return tomorrow;
-  if (lower.includes("today") || mail.includes("今天")) return today;
-  const isoMatch = mail.match(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/);
-  if (isoMatch) return `${isoMatch[1]}-${isoMatch[2].padStart(2, "0")}-${isoMatch[3].padStart(2, "0")}`;
-  return addDays(today, 3);
-}
-
-function guessDueTime(mail: string) {
-  const timeMatch = mail.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/);
-  if (timeMatch) return `${timeMatch[1].padStart(2, "0")}:${timeMatch[2]}`;
-  const amPmMatch = mail.match(/\b(1[0-2]|0?[1-9])\s?(am|pm)\b/i);
-  if (!amPmMatch) return "09:00";
-  let hour = Number(amPmMatch[1]);
-  if (amPmMatch[2].toLowerCase() === "pm" && hour < 12) hour += 12;
-  if (amPmMatch[2].toLowerCase() === "am" && hour === 12) hour = 0;
-  return `${String(hour).padStart(2, "0")}:00`;
-}
-
-function analyzeMail(mail: string): MailTodoSuggestion[] {
-  const sourceMatch = mail.match(/\b(Academic English|Computing Lab|Business Studies|Foundation Mathematics|Moodle|Student Progress)\b/i);
-  const source = sourceMatch?.[0] ?? "邮件";
-  const dueDate = guessDueDate(mail);
-  const dueTime = guessDueTime(mail);
-  const lower = mail.toLowerCase();
-  const suggestions: MailTodoSuggestion[] = [];
-
-  if (lower.includes("submit") || lower.includes("assignment") || mail.includes("提交") || mail.includes("作业")) {
-    suggestions.push({ id: `suggestion-${Date.now()}-submit`, selected: true, title: `提交 ${source} 相关任务`, dueDate, dueTime, source });
-  }
-  if (lower.includes("book") || lower.includes("appointment") || lower.includes("meeting") || mail.includes("预约") || mail.includes("会议")) {
-    suggestions.push({ id: `suggestion-${Date.now()}-booking`, selected: true, title: `确认 ${source} 预约或会议安排`, dueDate, dueTime, source });
-  }
-  if (lower.includes("prepare") || lower.includes("bring") || lower.includes("material") || mail.includes("准备") || mail.includes("材料")) {
-    suggestions.push({ id: `suggestion-${Date.now()}-prepare`, selected: true, title: `准备 ${source} 所需材料`, dueDate, dueTime, source });
-  }
-
-  return suggestions.length
-    ? suggestions
-    : [{ id: `suggestion-${Date.now()}-general`, selected: true, title: "处理邮件中的待办事项", dueDate, dueTime, source }];
-}
-
 export function TodoPanel() {
   const [todos, setTodos] = useState<Todo[]>(loadTodos);
   const [activeView, setActiveView] = useState<TodoViewId>("today");
@@ -143,11 +114,16 @@ export function TodoPanel() {
   const [mailText, setMailText] = useState("");
   const [mailSuggestions, setMailSuggestions] = useState<MailTodoSuggestion[]>([]);
   const [mailError, setMailError] = useState("");
+  const [mailAnalysisState, setMailAnalysisState] = useState<MailAnalysisState>("idle");
   const viewCounts = useMemo(
     () => Object.fromEntries(todoViewOrder.map((view) => [view, todoViewItems(todos, view).length])) as Record<TodoViewId, number>,
     [todos],
   );
   const visibleTodos = useMemo(() => sortTodos(todoViewItems(todos, activeView)), [activeView, todos]);
+  const selectedSuggestionCount = useMemo(
+    () => mailSuggestions.filter((suggestion) => suggestion.selected && suggestion.title.trim()).length,
+    [mailSuggestions],
+  );
 
   useEffect(() => {
     localStorage.setItem("unidock-todos", JSON.stringify(todos));
@@ -197,14 +173,46 @@ export function TodoPanel() {
     closeTodo();
   }
 
-  function analyzeMailText() {
+  function closeMailModal() {
+    setMailModalOpen(false);
+    setMailText("");
+    setMailSuggestions([]);
+    setMailError("");
+    setMailAnalysisState("idle");
+  }
+
+  async function analyzeMailText() {
     if (!mailText.trim()) {
-      setMailError("请先粘贴一封邮件内容。");
+      setMailError("请先粘贴邮件内容。");
       setMailSuggestions([]);
+      setMailAnalysisState("idle");
       return;
     }
     setMailError("");
-    setMailSuggestions(analyzeMail(mailText));
+    setMailSuggestions([]);
+    setMailAnalysisState("loading");
+
+    try {
+      const result = await analyzeMailWithAi(mailText, {
+        today: todayDate(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? "local",
+      });
+      if (!result.hasTasks || !result.suggestions.length) {
+        setMailAnalysisState("empty");
+        return;
+      }
+      setMailSuggestions(
+        result.suggestions.map((suggestion, index) => ({
+          id: `ai-suggestion-${Date.now()}-${index}`,
+          selected: true,
+          ...suggestion,
+        })),
+      );
+      setMailAnalysisState("success");
+    } catch (error) {
+      setMailError(error instanceof Error ? error.message : "分析失败，请稍后重试，或手动新增 Todo。");
+      setMailAnalysisState("error");
+    }
   }
 
   function addSelectedSuggestions() {
@@ -223,10 +231,7 @@ export function TodoPanel() {
     }));
     setTodos((items) => [...nextTodos, ...items]);
     setActiveView("today");
-    setMailModalOpen(false);
-    setMailText("");
-    setMailSuggestions([]);
-    setMailError("");
+    closeMailModal();
   }
 
   function updateSuggestion(id: string, patch: Partial<MailTodoSuggestion>) {
@@ -331,26 +336,50 @@ export function TodoPanel() {
         </div>
       ) : null}
       {mailModalOpen ? (
-        <div className="modal-backdrop" onClick={() => setMailModalOpen(false)}>
+        <div className="modal-backdrop" onClick={closeMailModal}>
           <article className="todo-modal mail-modal" role="dialog" aria-modal="true" aria-labelledby="mail-modal-title" onClick={(click) => click.stopPropagation()}>
             <p className="modal-kicker">Mail assistant</p>
             <h2 id="mail-modal-title">从邮件生成待办</h2>
-            <p className="local-note">手动粘贴一封邮件，系统会生成可编辑的 Todo 建议；不会读取真实邮箱。</p>
+            <p className="local-note">手动粘贴一封邮件，AI 会生成可编辑的 Todo 建议；不会读取真实邮箱。</p>
             <div className="mail-assistant-grid">
               <section className="mail-input-block">
                 <label>
                   <span>邮件内容</span>
                   <textarea
-                    placeholder="粘贴学校邮件内容，例如作业通知、预约提醒或材料要求。"
+                    placeholder="粘贴邮件或通知内容，例如作业通知、预约提醒、社团活动或生活事项。"
                     value={mailText}
                     onChange={(event) => setMailText(event.target.value)}
+                    disabled={mailAnalysisState === "loading"}
                   />
                 </label>
-                <button className="action-btn" type="button" onClick={analyzeMailText}>分析邮件</button>
+                <p className="privacy-note">邮件内容会被发送给 AI 用于分析。请不要粘贴密码、验证码或其他敏感信息。</p>
+                {mailError && mailAnalysisState !== "error" ? <p className="form-error">{mailError}</p> : null}
+                <button className="action-btn" type="button" onClick={analyzeMailText} disabled={mailAnalysisState === "loading"}>
+                  {mailAnalysisState === "loading" ? "分析中..." : "AI 分析"}
+                </button>
               </section>
-              <section className="suggestion-block">
+              <section className="suggestion-block" aria-live="polite">
                 <p className="panel-kicker">Todo suggestions</p>
-                {mailSuggestions.length ? (
+                {mailAnalysisState === "idle" ? (
+                  <p className="empty-state">粘贴邮件后点击“AI 分析”，这里会出现 Todo 建议。</p>
+                ) : null}
+                {mailAnalysisState === "loading" ? (
+                  <p className="empty-state">正在分析邮件内容...</p>
+                ) : null}
+                {mailAnalysisState === "empty" ? (
+                  <p className="empty-state">未发现明确待办。你仍然可以手动新增 Todo。</p>
+                ) : null}
+                {mailAnalysisState === "error" ? (
+                  <div className="analysis-error">
+                    <p>分析失败，请稍后重试，或手动新增 Todo。</p>
+                    {mailError ? <span>{mailError}</span> : null}
+                    <button className="ghost-btn" type="button" onClick={analyzeMailText}>
+                      <RefreshCw size={15} />
+                      重试
+                    </button>
+                  </div>
+                ) : null}
+                {mailAnalysisState === "success" && mailSuggestions.length ? (
                   <div className="suggestion-list">
                     {mailSuggestions.map((suggestion) => (
                       <article className="suggestion-card" key={suggestion.id}>
@@ -379,19 +408,28 @@ export function TodoPanel() {
                             <span>来源 / 课程</span>
                             <input value={suggestion.source ?? ""} onChange={(event) => updateSuggestion(suggestion.id, { source: event.target.value })} />
                           </label>
+                          <div className="ai-meta-row">
+                            <span>{typeLabels[suggestion.type ?? "other"]}</span>
+                            <span>置信度 {confidenceLabels[suggestion.confidence ?? "medium"]}</span>
+                          </div>
+                          {suggestion.evidence ? (
+                            <p className="evidence-line">
+                              <strong>原文依据</strong>
+                              {suggestion.evidence}
+                            </p>
+                          ) : null}
                         </div>
                       </article>
                     ))}
                   </div>
-                ) : (
-                  <p className="empty-state">粘贴邮件后点击“分析邮件”，这里会出现 Todo 建议。</p>
-                )}
+                ) : null}
               </section>
             </div>
-            {mailError ? <p className="form-error">{mailError}</p> : null}
             <div className="modal-actions">
-              <button className="ghost-btn" type="button" onClick={() => setMailModalOpen(false)}>取消</button>
-              <button className="action-btn" type="button" onClick={addSelectedSuggestions}>添加选中的待办</button>
+              <button className="ghost-btn" type="button" onClick={closeMailModal}>取消</button>
+              <button className="action-btn" type="button" onClick={addSelectedSuggestions} disabled={selectedSuggestionCount === 0 || mailAnalysisState !== "success"}>
+                添加选中的待办
+              </button>
             </div>
           </article>
         </div>

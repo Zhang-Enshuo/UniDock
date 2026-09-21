@@ -39,6 +39,27 @@ export type Todo = {
 
 export type TodoViewId = "today" | "planned" | "completed" | "all";
 
+export type AiTodoType = "assignment" | "appointment" | "meeting" | "material" | "admin" | "other";
+
+export type AiConfidence = "low" | "medium" | "high";
+
+export type AiTodoSuggestion = {
+  title: string;
+  dueDate?: string;
+  dueTime?: string;
+  source?: string;
+  type?: AiTodoType;
+  confidence?: AiConfidence;
+  evidence?: string;
+};
+
+export type AiMailAnalysisResult = {
+  hasTasks: boolean;
+  suggestions: AiTodoSuggestion[];
+};
+
+export type MailAnalysisState = "idle" | "loading" | "success" | "empty" | "error";
+
 export type MailTodoSuggestion = {
   id: string;
   selected: boolean;
@@ -46,6 +67,9 @@ export type MailTodoSuggestion = {
   dueDate?: string;
   dueTime?: string;
   source?: string;
+  type?: AiTodoType;
+  confidence?: AiConfidence;
+  evidence?: string;
 };
 
 export type UniLink = {
